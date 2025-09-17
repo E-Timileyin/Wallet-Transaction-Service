@@ -2,6 +2,8 @@ package api
 
 import (
 	"wallet-service/internal/api/handlers"
+	"wallet-service/internal/repository"
+	"wallet-service/internal/service"
 
 	"github.com/gin-gonic/gin"
 )
@@ -9,23 +11,19 @@ import (
 func NewRouter() *gin.Engine {
 	r := gin.Default()
 
-	// Group routes by resource
+	// Setup user module
+	userRepo := repository.NewUserRepository()
+	userService := service.NewUserService(userRepo)
+	userHandler := handlers.NewUserHandler(userService)
+
 	userRoutes := r.Group("/users")
 	{
-		userRoutes.GET("", handlers.GetUsers)    // GET /users
-		userRoutes.POST("", handlers.CreateUser) // POST /users
-		userRoutes.GET("/:id", handlers.GetUserById)
+		userRoutes.GET("", userHandler.GetUsers)
+		userRoutes.GET("/:id", userHandler.GetUserByID)
+		userRoutes.GET("/email/:email", userHandler.GetUserByEmail)
+		userRoutes.POST("", userHandler.CreateUser)
+		userRoutes.DELETE("/:id", userHandler.DeleteUser)
 	}
-
-	// walletRoutes := r.Group("/wallets")
-	// {
-	//     // Define wallet endpoints later
-	// }
-
-	// transactionRoutes := r.Group("/transactions")
-	// {
-	//     // Define transaction endpoints later
-	// }
 
 	return r
 }

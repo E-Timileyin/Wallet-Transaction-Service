@@ -3,60 +3,69 @@ package handlers
 import (
 	"net/http"
 	"strconv"
+	"wallet-service/internal/models"
+	"wallet-service/internal/service"
 
 	"github.com/gin-gonic/gin"
 )
 
-type User struct {
-	Id       int    `json:"id"`
-	Name     string `json:"name"`
-	Email    string `json:"email"`
-	Password string `json:"password"`
+type UserHandler struct {
+	Service *service.UserService
 }
 
-// temporary in-memory users
-var users = []User{
-	{Id: 1, Name: "John Doe", Email: "john.doe@example.com", Password: "password123"},
-	{Id: 2, Name: "Jane Smith", Email: "jane.smith@example.com", Password: "password456"},
+func NewUserHandler(svc *service.UserService) *UserHandler {
+	return &UserHandler{Service: svc}
 }
 
-// GET /users (all users or query by email)
-func GetUsers(c *gin.Context) {
-	email := c.Query("email")
-	if email != "" {
-		for _, user := range users {
-			if user.Email == email {
-				c.JSON(http.StatusOK, user)
-				return
-			}
-		}
-		c.JSON(http.StatusNotFound, gin.H{"error": "User not found"})
+func (h *UserHandler) GetUsers(c *gin.Context) {
+	users, err := h.Service.GetAllUsers()
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
 	c.JSON(http.StatusOK, users)
 }
 
-// GET /users/:id (user by ID)
-func GetUserById(c *gin.Context) {
-	id := c.Param("id")
-	for _, user := range users {
-		if strconv.Itoa(user.Id) == id {
-			c.JSON(http.StatusOK, user)
-			return
-		}
+func (h *UserHandler) GetUserByID(c *gin.Context) {
+	id, _ := strconv.Atoi(c.Param("id"))
+	user, err := h.Service.GetUserByID(uint(id))
+	if err != nil {
+		c.JSON(http.StatusNotFound, gin.H{"error": "User not found"})
+		return
 	}
-	c.JSON(http.StatusNotFound, gin.H{"error": "User not found"})
+	c.JSON(http.StatusOK, user)
 }
 
-// POST /users (create new user)
-func CreateUser(c *gin.Context) {
-	var user User
+func (h *UserHandler) GetUserByEmail(c *gin.Context) {
+	email := c.Param("email")
+	user, err := h.Service.GetUserByEmail(email)
+	if err != nil {
+		c.JSON(http.StatusNotFound, gin.H{"error": "User not found"})
+		return
+	}
+	c.JSON(http.StatusOK, user)
+}
+
+func (h *UserHandler) CreateUser(c *gin.Context) {
+	var user models.User
 	if err := c.ShouldBindJSON(&user); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
-	// naive auto-increment ID
-	user.Id = len(users) + 1
-	users = append(users, user)
-	c.JSON(http.StatusCreated, user)
+
+	if err := h.Service.CreateUser(&user); err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
+	c.JSON(http.StatusOK, user)
+}
+
+func (h *UserHandler) DeleteUser(c *gin.Context) {
+	id, _ := strconv.Atoi(c.Param("id"))
+	if err := h.Service.DeleteUser(uint(id)); err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+	c.JSON(http.StatusOK, gin.H{"message": "User deleted successfully"})
 }

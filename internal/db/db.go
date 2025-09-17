@@ -7,11 +7,13 @@ import (
 	"github.com/joho/godotenv"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
+
+	"wallet-service/internal/models"
 )
 
 var DB *gorm.DB
 
-// InitDB initializes the database connection
+// InitDB initializes the database connection and runs migrations
 func InitDB() {
 	// Load .env first (if exists)
 	if err := godotenv.Load(); err != nil {
@@ -32,4 +34,10 @@ func InitDB() {
 
 	DB = db
 	log.Println("✅ Database connected successfully")
+
+	// Auto-migrate your models
+	if err := DB.AutoMigrate(&models.User{}, &models.Wallet{}, &models.Transaction{}); err != nil {
+		log.Fatalf("❌ Failed to migrate tables: %v", err)
+	}
+	log.Println("✅ Database tables migrated successfully")
 }
