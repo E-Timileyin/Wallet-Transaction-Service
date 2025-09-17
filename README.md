@@ -498,7 +498,6 @@ wallet-service/
 │   │
 │   ├── repository/           # Data access layer
 │   │   ├── user_repository.go
-│   │   ├── wallet_repository.go
 │   │   └── transaction_repository.go
 │   │
 │   └── service/              # Business logic layer
@@ -513,7 +512,7 @@ wallet-service/
 │       ├── errors.go          # Error handling
 │       └── crypto.go          # Cryptographic functions
 │
-├── deployments/               # Deployment configurations
+├── deployments/               # Deployment /configurations
 │   ├── docker/               # Docker files
 │   └── ci-cd/                # CI/CD pipelines
 │
@@ -802,4 +801,4 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ---
 
-Made to Scale by Eyiowuawi Timileyin ❤️
+Made to Scale by Eyiowuawi Timileyin ❤️google.com

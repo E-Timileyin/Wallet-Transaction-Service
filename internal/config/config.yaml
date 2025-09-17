@@ -1,0 +1,2 @@
+DATABASE_URL: postgresql://neondb_owner:npg_IDhkXVJ8NvT5@ep-nameless-bird-abmhe0ii-pooler.eu-west-2.aws.neon.tech/wallet_database?sslmode=require&channel_binding=require
+PORT: "8000"

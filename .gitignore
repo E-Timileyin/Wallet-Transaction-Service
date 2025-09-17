@@ -1,0 +1,38 @@
+# Environment and Configuration Files
+.env
+*.log
+
+# Build and Binary Files
+tmp/
+cmd/wallet-service/tmp/
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+*.test
+*.out
+main
+
+STRUCTURE.md
+
+
+# Go-specific
+vendor/
+go.work
+go.work.sum
+
+# Development and IDE
+.air.toml
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS-specific
+.DS_Store
+Thumbs.db
+
+# Database
+*.db
