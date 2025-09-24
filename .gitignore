@@ -36,3 +36,7 @@ Thumbs.db
 
 # Database
 *.db
+
+
+DEVELOPMENT_GUIDE.md
+STRUCTURE.md

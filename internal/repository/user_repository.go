@@ -23,7 +23,7 @@ func (r *UserRepository) GetAll() ([]models.User, error) {
 	return users, nil
 }
 
-func (r *UserRepository) GetByID(id uint) (*models.User, error) {
+func (r *UserRepository) FindByID(id uint) (*models.User, error) {
 	var user models.User
 	if err := r.DB.First(&user, id).Error; err != nil {
 		return nil, err
@@ -31,7 +31,7 @@ func (r *UserRepository) GetByID(id uint) (*models.User, error) {
 	return &user, nil
 }
 
-func (r *UserRepository) GetByEmail(email string) (*models.User, error) {
+func (r *UserRepository) FindByEmail(email string) (*models.User, error) {
 	var user models.User
 	if err := r.DB.Where("email = ?", email).First(&user).Error; err != nil {
 		return nil, err

@@ -2,18 +2,49 @@ package main
 
 import (
 	"log"
-	"wallet-service/internal/api"
+	"wallet-service/internal/api/handlers"
+	"wallet-service/internal/api/routes"
+	"wallet-service/internal/config"
 	"wallet-service/internal/db"
+	"wallet-service/internal/repository"
+	"wallet-service/internal/service"
 
 	"github.com/gin-gonic/gin"
+	"github.com/spf13/viper"
 )
 
 func main() {
+	// Load configuration
+	if err := config.LoadConfig(); err != nil {
+		log.Fatalf("Failed to load configuration: %v", err)
+	}
+
+	var cfg config.Config
+	if err := viper.Unmarshal(&cfg); err != nil {
+		log.Fatalf("Failed to unmarshal configuration: %v", err)
+	}
+
+	// Initialize database
 	db.InitDB()
 
+	// Set up Gin mode
 	gin.SetMode(gin.DebugMode)
-	router := api.NewRouter()
+	router := gin.Default()
 
+	// Initialize components
+	userRepo := repository.NewUserRepository()
+
+	authService := service.NewAuthService(*userRepo, &cfg)
+	userService := service.NewUserService(userRepo)
+
+	authHandler := handlers.NewAuthHandler(authService)
+	userHandler := handlers.NewUserHandler(userService)
+
+	// Setup routes
+	routes.SetupAuthRoutes(router, authHandler)
+	routes.SetupUserRoutes(router, userHandler, authService)
+
+	// Start server
 	log.Println("🚀 Starting server on :8080")
 	if err := router.Run(":8080"); err != nil {
 		log.Fatalf("Failed to start server: %v", err)

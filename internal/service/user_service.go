@@ -18,11 +18,11 @@ func (s *UserService) GetAllUsers() ([]models.User, error) {
 }
 
 func (s *UserService) GetUserByID(id uint) (*models.User, error) {
-	return s.Repo.GetByID(id)
+	return s.Repo.FindByID(id)
 }
 
 func (s *UserService) GetUserByEmail(email string) (*models.User, error) {
-	return s.Repo.GetByEmail(email)
+	return s.Repo.FindByEmail(email)
 }
 
 func (s *UserService) CreateUser(user *models.User) error {
