@@ -33,16 +33,28 @@ func main() {
 
 	// Initialize components
 	userRepo := repository.NewUserRepository()
+	walletRepo := repository.NewWalletRepository()
+	transactionRepo := repository.NewTransactionRepository()
 
-	authService := service.NewAuthService(*userRepo, &cfg)
+	walletService := service.NewWalletService(walletRepo)
+	transactionService := service.NewTransactionService(transactionRepo)
+
+	authService := service.NewAuthService(*userRepo, walletService, &cfg)
 	userService := service.NewUserService(userRepo)
+	adminService := service.NewAdminService(userRepo)
 
 	authHandler := handlers.NewAuthHandler(authService)
 	userHandler := handlers.NewUserHandler(userService)
+	adminHandler := handlers.NewAdminHandler(adminService)
+	walletHandler := handlers.NewWalletHandler(walletService, transactionService)
+	transactionHandler := handlers.NewTransactionHandler(transactionService)
 
 	// Setup routes
 	routes.SetupAuthRoutes(router, authHandler)
 	routes.SetupUserRoutes(router, userHandler, authService)
+	routes.SetupAdminRoutes(router, adminHandler, authService, userRepo)
+	routes.SetupWalletRoutes(router, walletHandler, authService)
+	routes.SetupTransactionRoutes(router, transactionHandler, authService)
 
 	// Start server
 	log.Println("🚀 Starting server on :8080")

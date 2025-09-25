@@ -19,3 +19,23 @@ func NewAdminService(userRepo *repository.UserRepository) *AdminService {
 func (s *AdminService) GetAllUsers() ([]models.User, error) {
 	return s.userRepo.GetAll()
 }
+
+// UpdateUserRole updates the role of a specific user.
+func (s *AdminService) UpdateUserRole(userID uint, newRole string) (*models.User, error) {
+	user, err := s.userRepo.FindByID(userID)
+	if err != nil {
+		return nil, err
+	}
+
+	user.Role = newRole
+	if err := s.userRepo.Update(user); err != nil {
+		return nil, err
+	}
+
+	return user, nil
+}
+
+// DeleteAllUsers deletes all users from the system.
+func (s *AdminService) DeleteAllUsers() error {
+	return s.userRepo.DeleteAll()
+}

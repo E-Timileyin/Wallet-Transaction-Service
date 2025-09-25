@@ -2,6 +2,7 @@ package service
 
 import (
 	"errors"
+	"log"
 	"time"
 	"wallet-service/internal/config"
 	"wallet-service/internal/models"
@@ -14,13 +15,14 @@ import (
 
 // AuthService provides authentication-related services.
 type AuthService struct {
-	userRepo repository.UserRepository
-	cfg      *config.Config
+	userRepo      repository.UserRepository
+	walletService *WalletService
+	cfg           *config.Config
 }
 
 // NewAuthService creates a new AuthService.
-func NewAuthService(userRepo repository.UserRepository, cfg *config.Config) *AuthService {
-	return &AuthService{userRepo: userRepo, cfg: cfg}
+func NewAuthService(userRepo repository.UserRepository, walletService *WalletService, cfg *config.Config) *AuthService {
+	return &AuthService{userRepo: userRepo, walletService: walletService, cfg: cfg}
 }
 
 // Register creates a new user, hashes their password, and saves them to the database.
@@ -42,6 +44,12 @@ func (s *AuthService) Register(req *models.RegisterRequest) (*models.User, error
 
 	if err := s.userRepo.Create(user); err != nil {
 		return nil, err
+	}
+
+	// Create a default wallet for the new user
+	if _, err := s.walletService.CreateWallet(user.ID, "Primary Wallet"); err != nil {
+		// Log the error, but don't fail the registration
+		log.Printf("Failed to create wallet for user %d: %v", user.ID, err)
 	}
 
 	// Do not return the password hash

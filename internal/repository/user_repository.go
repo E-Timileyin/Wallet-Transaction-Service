@@ -43,6 +43,14 @@ func (r *UserRepository) Create(user *models.User) error {
 	return r.DB.Create(user).Error
 }
 
+func (r *UserRepository) Update(user *models.User) error {
+	return r.DB.Save(user).Error
+}
+
 func (r *UserRepository) Delete(id uint) error {
 	return r.DB.Delete(&models.User{}, id).Error
+}
+
+func (r *UserRepository) DeleteAll() error {
+	return r.DB.Exec("DELETE FROM users").Error
 }
