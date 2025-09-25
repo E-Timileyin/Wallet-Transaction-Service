@@ -17,6 +17,5 @@ func SetupUserRoutes(router *gin.Engine, userHandler *handlers.UserHandler, auth
 		userRoutes.GET("/:id", userHandler.GetUserByID)
 		userRoutes.GET("/email/:email", userHandler.GetUserByEmail)
 		userRoutes.POST("", userHandler.CreateUser)
-		userRoutes.DELETE("/:id", userHandler.DeleteUser)
 	}
 }

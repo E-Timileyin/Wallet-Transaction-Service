@@ -17,6 +17,7 @@ func SetupAdminRoutes(router *gin.Engine, adminHandler *handlers.AdminHandler, a
 	{
 		adminRoutes.GET("/users", adminHandler.GetAllUsers)
 		adminRoutes.PUT("/users/:id/role", adminHandler.UpdateUserRole)
+		adminRoutes.DELETE("/users/:id", adminHandler.DeleteUser)
 		adminRoutes.DELETE("/users", adminHandler.DeleteAllUsers)
 	}
 }

@@ -7,6 +7,7 @@ import (
 	"wallet-service/internal/service"
 
 	"github.com/gin-gonic/gin"
+	_ "wallet-service/docs"
 )
 
 // WalletHandler handles wallet-related HTTP requests.
@@ -21,6 +22,15 @@ func NewWalletHandler(walletService *service.WalletService, transactionService *
 }
 
 // GetWallet handles the request to get the current user's wallet.
+// @Summary Get user wallet
+// @Description Retrieve the current user's wallet information
+// @Tags Wallets
+// @Security ApiKeyAuth
+// @Produce json
+// @Success 200 {object} models.Wallet
+// @Failure 401 {object} map[string]string
+// @Failure 404 {object} map[string]string
+// @Router /api/wallet [get]
 func (h *WalletHandler) GetWallet(c *gin.Context) {
 	userID, exists := c.Get("user_id")
 	if !exists {
@@ -38,6 +48,19 @@ func (h *WalletHandler) GetWallet(c *gin.Context) {
 }
 
 // FundWallet handles the request to add funds to the user's wallet.
+// @Summary Fund wallet
+// @Description Add funds to the user's wallet
+// @Tags Wallets
+// @Security ApiKeyAuth
+// @Accept json
+// @Produce json
+// @Param request body models.FundWalletRequest true "Funding request"
+// @Success 200 {object} models.Wallet
+// @Failure 400 {object} map[string]string
+// @Failure 401 {object} map[string]string
+// @Failure 404 {object} map[string]string
+// @Failure 500 {object} map[string]string
+// @Router /api/wallet/fund [post]
 func (h *WalletHandler) FundWallet(c *gin.Context) {
 	userID, exists := c.Get("user_id")
 	if !exists {

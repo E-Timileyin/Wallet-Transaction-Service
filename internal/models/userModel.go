@@ -7,15 +7,17 @@ import (
 	"gorm.io/gorm"
 )
 
+// User represents a user in the system
+// @Description User model
 type User struct {
-	ID        uint       `gorm:"primaryKey" json:"id"`
-	Name      string     `json:"name"`
-	Email     string     `gorm:"unique" json:"email"`
-	Role      string     `gorm:"default:'user'" json:"role"`
+	ID        uint       `json:"id" example:"1" gorm:"primaryKey"`
+	Name      string     `json:"name" example:"John Doe"`
+	Email     string     `json:"email" example:"john@example.com" gorm:"unique"`
+	Role      string     `json:"role" example:"user" gorm:"default:'user'"`
 	Password  string     `json:"-"`
-	CreatedAt time.Time  `json:"created_at"`
-	UpdatedAt time.Time  `json:"updated_at"`
-	DeletedAt *time.Time `gorm:"index" json:"deleted_at,omitempty"`
+	CreatedAt time.Time  `json:"created_at" example:"2023-01-01T00:00:00Z"`
+	UpdatedAt time.Time  `json:"updated_at" example:"2023-01-01T00:00:00Z"`
+	DeletedAt *time.Time `json:"deleted_at,omitempty" gorm:"index"`
 }
 
 // BeforeCreate is a GORM hook that automatically hashes the user's password before creation.

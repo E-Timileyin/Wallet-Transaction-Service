@@ -1,6 +1,5 @@
 # Wallet Service
 
-[![Go Report Card](https://goreportcard.com/badge/github.com/your-username/wallet-service)](https://goreportcard.com/report/github.com/your-username/wallet-service)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Docker](https://img.shields.io/badge/docker-ready-blue.svg)](https://www.docker.com/)
 [![Go Version](https://img.shields.io/badge/Go-1.21+-00ADD8?style=flat&logo=go&logoColor=white)](https://golang.org)
@@ -15,8 +14,8 @@ A **scalable, production-ready wallet and transaction management microservice** 
 - [Prerequisites](#-prerequisites)
 - [Installation](#-installation)
 - [Configuration](#-configuration)
-- [Usage](#-usage)
 - [API Documentation](#-api-documentation)
+- [Usage](#-usage)
 - [Project Structure](#-project-structure)
 - [Testing](#-testing)
 - [Deployment](#-deployment)
@@ -69,7 +68,7 @@ Before you begin, ensure you have the following installed:
 ### 1. Clone the Repository
 
 ```bash
-git clone https://github.com/your-username/wallet-service.git
+git clone <repository-url>
 cd wallet-service
 ```
 
@@ -92,15 +91,6 @@ createdb wallet_service
 go run cmd/wallet-service/main.go migrate
 ```
 
-#### Option B: Docker Compose
-
-```bash
-# Start PostgreSQL with Docker Compose
-docker-compose up -d postgres
-
-# Wait for PostgreSQL to be ready
-docker-compose exec postgres pg_isready
-```
 
 ## ⚙️ Configuration
 
@@ -172,6 +162,29 @@ logging:
   format: json
 ```
 
+## 📚 API Documentation
+
+The complete API documentation for the Wallet Transaction Service is available on SwaggerHub:
+
+**🔗 [Wallet Transaction Service API Documentation](https://app.swaggerhub.com/apis-docs/eyiowuawittimileyin/Wallet-Transaction-Service)**
+
+### Interactive API Explorer
+
+Visit the SwaggerHub link to access:
+- **Interactive API Console** - Test endpoints directly from your browser
+- **Complete API Reference** - Detailed documentation for all endpoints
+- **Request/Response Examples** - See sample requests and responses
+- **Authentication Details** - JWT authentication setup and usage
+- **Error Codes** - Comprehensive error response documentation
+
+### Key Features
+
+- **RESTful Design** - Clean, intuitive API endpoints
+- **JWT Authentication** - Secure token-based authentication
+- **Comprehensive Validation** - Input validation and error handling
+- **Real-time Updates** - WebSocket support for live notifications
+- **Rate Limiting** - Built-in protection against abuse
+
 ## 🎯 Usage
 
 ### Running the Application
@@ -196,16 +209,6 @@ go build -o bin/wallet-service cmd/wallet-service/main.go
 ./bin/wallet-service
 ```
 
-#### Docker
-
-```bash
-# Build and run with Docker Compose
-docker-compose up --build
-
-# Or build Docker image manually
-docker build -t wallet-service .
-docker run -p 8080:8080 --env-file .env wallet-service
-```
 
 ### Health Check
 
@@ -223,247 +226,6 @@ Expected response:
   "timestamp": "2024-01-01T00:00:00Z",
   "version": "1.0.0",
   "database": "connected"
-}
-```
-
-## 📡 API Documentation
-
-### Authentication
-
-All API endpoints (except health check) require JWT authentication. Include the token in the Authorization header:
-
-```http
-Authorization: Bearer <your-jwt-token>
-```
-
-### Base URL
-
-- **Development**: `http://localhost:8080`
-- **Production**: `https://api.yourdomain.com`
-
-### Endpoints
-
-#### 1. Health Check
-
-```http
-GET /health
-```
-
-**Response:**
-```json
-{
-  "status": "ok",
-  "timestamp": "2024-01-01T00:00:00Z",
-  "version": "1.0.0"
-}
-```
-
-#### 2. User Authentication
-
-##### Login
-```http
-POST /api/auth/login
-Content-Type: application/json
-
-{
-  "email": "user@example.com",
-  "password": "securepassword"
-}
-```
-
-**Response:**
-```json
-{
-  "access_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
-  "refresh_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
-  "expires_at": "2024-01-02T00:00:00Z",
-  "user": {
-    "id": "123",
-    "email": "user@example.com",
-    "created_at": "2024-01-01T00:00:00Z"
-  }
-}
-```
-
-#### 3. Wallet Management
-
-##### Create Wallet
-```http
-POST /api/wallets
-Content-Type: application/json
-Authorization: Bearer <token>
-
-{
-  "currency": "USD",
-  "wallet_type": "personal"
-}
-```
-
-**Response:**
-```json
-{
-  "id": "wallet_123",
-  "user_id": "user_123",
-  "currency": "USD",
-  "balance": 0.00,
-  "status": "active",
-  "created_at": "2024-01-01T00:00:00Z",
-  "updated_at": "2024-01-01T00:00:00Z"
-}
-```
-
-##### Get Wallet
-```http
-GET /api/wallets/{wallet_id}
-Authorization: Bearer <token>
-```
-
-**Response:**
-```json
-{
-  "id": "wallet_123",
-  "user_id": "user_123",
-  "currency": "USD",
-  "balance": 150.50,
-  "status": "active",
-  "created_at": "2024-01-01T00:00:00Z",
-  "updated_at": "2024-01-01T00:00:00Z"
-}
-```
-
-##### Fund Wallet
-```http
-POST /api/wallets/{wallet_id}/fund
-Content-Type: application/json
-Authorization: Bearer <token>
-
-{
-  "amount": 100.50,
-  "reference": "DEPOSIT_123",
-  "description": "Bank deposit"
-}
-```
-
-**Response:**
-```json
-{
-  "transaction_id": "txn_123",
-  "wallet_id": "wallet_123",
-  "amount": 100.50,
-  "type": "deposit",
-  "status": "completed",
-  "reference": "DEPOSIT_123",
-  "balance_after": 100.50,
-  "created_at": "2024-01-01T00:00:00Z"
-}
-```
-
-##### Withdraw from Wallet
-```http
-POST /api/wallets/{wallet_id}/withdraw
-Content-Type: application/json
-Authorization: Bearer <token>
-
-{
-  "amount": 50.00,
-  "reference": "WITHDRAWAL_123",
-  "description": "ATM withdrawal"
-}
-```
-
-**Response:**
-```json
-{
-  "transaction_id": "txn_124",
-  "wallet_id": "wallet_123",
-  "amount": 50.00,
-  "type": "withdrawal",
-  "status": "completed",
-  "reference": "WITHDRAWAL_123",
-  "balance_after": 50.50,
-  "created_at": "2024-01-01T00:00:00Z"
-}
-```
-
-##### Transfer Between Wallets
-```http
-POST /api/wallets/transfer
-Content-Type: application/json
-Authorization: Bearer <token>
-
-{
-  "source_wallet_id": "wallet_123",
-  "destination_wallet_id": "wallet_456",
-  "amount": 25.00,
-  "reference": "TRANSFER_123",
-  "description": "Payment to friend"
-}
-```
-
-**Response:**
-```json
-{
-  "transaction_id": "txn_125",
-  "source_wallet_id": "wallet_123",
-  "destination_wallet_id": "wallet_456",
-  "amount": 25.00,
-  "type": "transfer",
-  "status": "completed",
-  "reference": "TRANSFER_123",
-  "source_balance_after": 25.50,
-  "destination_balance_after": 25.00,
-  "created_at": "2024-01-01T00:00:00Z"
-}
-```
-
-#### 4. Transaction History
-
-##### Get Wallet Transactions
-```http
-GET /api/wallets/{wallet_id}/transactions?page=1&limit=20&type=deposit
-Authorization: Bearer <token>
-```
-
-**Response:**
-```json
-{
-  "data": [
-    {
-      "id": "txn_123",
-      "wallet_id": "wallet_123",
-      "amount": 100.50,
-      "type": "deposit",
-      "status": "completed",
-      "reference": "DEPOSIT_123",
-      "description": "Bank deposit",
-      "balance_after": 100.50,
-      "created_at": "2024-01-01T00:00:00Z"
-    }
-  ],
-  "pagination": {
-    "page": 1,
-    "limit": 20,
-    "total": 1,
-    "pages": 1
-  }
-}
-```
-
-### Error Responses
-
-All endpoints return consistent error responses:
-
-```json
-{
-  "error": {
-    "code": "INSUFFICIENT_BALANCE",
-    "message": "Insufficient balance for this transaction",
-    "details": {
-      "available_balance": 25.50,
-      "requested_amount": 50.00
-    }
-  },
-  "timestamp": "2024-01-01T00:00:00Z"
 }
 ```
 
@@ -513,21 +275,8 @@ wallet-service/
 │       └── crypto.go          # Cryptographic functions
 │
 ├── deployments/               # Deployment /configurations
-│   ├── docker/               # Docker files
 │   └── ci-cd/                # CI/CD pipelines
 │
-├── scripts/                  # Utility scripts
-│   ├── migrate.sh            # Migration script
-│   ├── build.sh              # Build script
-│   └── deploy.sh             # Deployment script
-│
-├── docs/                     # Documentation
-│   ├── api/                  # API documentation
-│   ├── architecture/         # Architecture diagrams
-│   └── adr/                  # Architecture Decision Records
-│
-├── docker-compose.yml        # Docker Compose configuration
-├── Dockerfile                # Docker build file
 ├── .env.example              # Environment variables example
 ├── .gitignore               # Git ignore rules
 ├── go.mod                   # Go module file
@@ -613,33 +362,13 @@ func TestWalletService_CreateWallet(t *testing.T) {
 
 ### Local Development
 
-```bash
-# Start all services with Docker Compose
-docker-compose up -d
-
-# View logs
-docker-compose logs -f
-
-# Stop services
-docker-compose down
-```
 
 ### Production Deployment
 
 
-#### Docker Swarm
-
-```bash
-# Deploy to Docker Swarm
-docker stack deploy -c deployments/docker-stack.yml wallet-service
-
-# Check service status
-docker service ls
-```
-
 ### Environment-specific Configurations
 
-- **Development**: Use `docker-compose.yml` for local development
+- **Development**: Use local PostgreSQL for development
 - **Staging**: Use Docker with resource limits and monitoring
 - **Production**: Use Docker with autoscaling, monitoring, and backup strategies
 
@@ -648,7 +377,6 @@ docker service ls
 The project supports automated CI/CD pipelines:
 
 ```yaml
-# .github/workflows/ci.yml
 # .github/workflows/ci.yml
 name: CI/CD Pipeline
 
@@ -678,7 +406,7 @@ jobs:
       - uses: actions/checkout@v3
       - uses: docker/setup-buildx-action@v2
       - run: docker build -t wallet-service .
-      - run: docker push your-registry/wallet-service:latest
+      - run: docker push <your-registry>/wallet-service:latest
 
 ```
 
@@ -775,6 +503,161 @@ chore: update dependencies
 5. **Address feedback** promptly
 6. **Keep PRs small** and focused
 
+## 🚀 Future Features & Roadmap
+
+### 🎯 Priority Features
+
+#### Phase 1: Core Enhancements (High Priority)
+
+1. **Transaction Categories & Tags**
+   - Categorize transactions (Food, Transport, Entertainment, etc.)
+   - Custom tags for better organization
+   - Spending analytics by category
+   - Implementation timeline: 2-3 weeks
+
+2. **User Profile Management**
+   - Profile avatar upload
+   - Personal information management
+   - User preferences and settings
+   - Implementation timeline: 1-2 weeks
+
+3. **Admin Dashboard**
+   - System overview with key metrics
+   - User statistics and analytics
+   - Transaction monitoring and fraud detection
+   - Implementation timeline: 3-4 weeks
+
+#### Phase 2: Security & Communication (Medium Priority)
+
+4. **Notification System**
+   - Email notifications for transactions
+   - SMS alerts for large transactions
+   - Push notifications for mobile apps
+   - Implementation timeline: 2-3 weeks
+
+5. **Two-Factor Authentication (2FA)**
+   - TOTP (Time-based One-Time Password) support
+   - SMS-based 2FA
+   - 2FA backup codes for account recovery
+   - Implementation timeline: 2-3 weeks
+
+6. **Rate Limiting & Throttling**
+   - API rate limiting per user
+   - Customizable rate limits
+   - Abuse detection and prevention
+   - Implementation timeline: 1-2 weeks
+
+#### Phase 3: Advanced Features (Medium Priority)
+
+7. **Multi-Currency Support**
+   - Support for multiple currencies (USD, EUR, GBP, etc.)
+   - Real-time currency conversion using exchange rate APIs
+   - Currency-specific transaction history
+   - Implementation timeline: 3-4 weeks
+
+8. **Transaction Limits & Controls**
+   - Daily/weekly/monthly spending limits
+   - Transaction size limits
+   - Customizable limits per user or role
+   - Implementation timeline: 2-3 weeks
+
+9. **Financial Analytics Dashboard**
+   - Spending trends and insights
+   - Monthly/weekly reports
+   - Visual charts and graphs
+   - Implementation timeline: 3-4 weeks
+
+#### Phase 4: Business & Integration Features (Lower Priority)
+
+10. **Recurring Transactions**
+    - Scheduled payments and transfers
+    - Subscription management
+    - Automatic bill payments
+    - Implementation timeline: 4-5 weeks
+
+11. **Export Functionality**
+    - Export transaction history to CSV/PDF
+    - Generate account statements
+    - Custom date range exports
+    - Implementation timeline: 2-3 weeks
+
+12. **Payment Gateway Integration**
+    - Stripe/PayPal integration for deposits
+    - Multiple payment methods
+    - Payment processing and settlement
+    - Implementation timeline: 4-6 weeks
+
+### 🔧 Technical Enhancements
+
+#### Performance & Scalability
+
+13. **Caching Layer**
+    - Redis caching for frequently accessed data
+    - Cache invalidation strategies
+    - Performance optimization
+    - Implementation timeline: 2-3 weeks
+
+14. **Database Optimization**
+    - Query optimization and indexing
+    - Database connection pooling
+    - Read replicas for scaling
+    - Implementation timeline: 2-4 weeks
+
+#### Integration & Extensibility
+
+15. **Webhook Support**
+    - Webhook endpoints for real-time notifications
+    - Event-driven architecture
+    - Third-party integrations
+    - Implementation timeline: 3-4 weeks
+
+16. **External Bank API Integration**
+    - Connect to external bank accounts
+    - Plaid integration for bank connections
+    - Account aggregation
+    - Implementation timeline: 4-6 weeks
+
+17. **GraphQL API**
+    - Alternative to REST API
+    - More flexible data queries
+    - Reduced over-fetching
+    - Implementation timeline: 3-5 weeks
+
+### 📋 Implementation Strategy
+
+#### Development Approach
+
+- **Modular Implementation**: Each feature can be developed independently
+- **API-First Design**: All features will have proper API documentation
+- **Test-Driven Development**: Comprehensive test coverage for all features
+- **Incremental Rollout**: Features will be released in phases
+
+#### Technology Considerations
+
+- **Go 1.21+**: Continue using latest stable Go version
+- **PostgreSQL**: Leverage advanced features for complex queries
+- **Redis**: For caching and session management
+- **Message Queues**: RabbitMQ/Kafka for async processing
+- **Monitoring**: Prometheus/Grafana for observability
+
+#### Security & Compliance
+
+- **GDPR Compliance**: User data protection and privacy
+- **PCI-DSS**: Payment card industry standards
+- **Audit Logging**: Complete audit trail for all actions
+- **Data Encryption**: Encryption at rest and in transit
+
+### 🎉 Community Contributions
+
+We welcome community contributions for any of these features! If you're interested in implementing a particular feature:
+
+1. **Check the issues** for existing feature requests
+2. **Create a discussion** to propose your implementation approach
+3. **Submit a pull request** with proper tests and documentation
+4. **Follow the contribution guidelines** outlined above
+
+---
+
 ## 📄 License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
@@ -800,5 +683,3 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 > SOFTWARE.
 
 ---
-
-Made to Scale by Eyiowuawi Timileyin ❤️google.com

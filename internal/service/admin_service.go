@@ -35,6 +35,11 @@ func (s *AdminService) UpdateUserRole(userID uint, newRole string) (*models.User
 	return user, nil
 }
 
+// DeleteUser deletes a specific user by ID.
+func (s *AdminService) DeleteUser(userID uint) error {
+	return s.userRepo.Delete(userID)
+}
+
 // DeleteAllUsers deletes all users from the system.
 func (s *AdminService) DeleteAllUsers() error {
 	return s.userRepo.DeleteAll()

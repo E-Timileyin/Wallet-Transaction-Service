@@ -11,6 +11,9 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/spf13/viper"
+	swaggoFiles "github.com/swaggo/files"
+	ginSwagger "github.com/swaggo/gin-swagger"
+	_ "wallet-service/docs"
 )
 
 func main() {
@@ -55,6 +58,9 @@ func main() {
 	routes.SetupAdminRoutes(router, adminHandler, authService, userRepo)
 	routes.SetupWalletRoutes(router, walletHandler, authService)
 	routes.SetupTransactionRoutes(router, transactionHandler, authService)
+
+	// Swagger UI route
+	router.GET("/swagger/*any", ginSwagger.WrapHandler(swaggoFiles.Handler))
 
 	// Start server
 	log.Println("🚀 Starting server on :8080")
